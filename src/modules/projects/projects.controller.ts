@@ -9,6 +9,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Auth } from 'src/core/decorators';
+import { Role } from 'src/core/enums';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -19,6 +21,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
+  @Auth(Role.ADMIN)
   create(@Body() createProjectDto: CreateProjectDto) {
     return this.projectsService.create(createProjectDto);
   }
@@ -34,6 +37,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
+  @Auth(Role.ADMIN)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
@@ -42,6 +46,7 @@ export class ProjectsController {
   }
 
   @Delete(':id')
+  @Auth(Role.ADMIN)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.remove(id);
   }

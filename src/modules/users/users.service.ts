@@ -18,25 +18,29 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.find();
   }
 
-  findOne(id: string) {
-    return this.userRepository.findOneBy({ id });
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return this.userRepository.update(id, updateUserDto);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findById(id: string): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-
-  findById(id: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ id });
-  }
-  findOneByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ email });
+  async findOneByEmail(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
   }
 }

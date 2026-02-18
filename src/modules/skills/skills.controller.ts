@@ -8,6 +8,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Auth } from 'src/core/decorators';
+import { Role } from 'src/core/enums';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { QuerySkillDto } from './dto/query-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
@@ -18,6 +20,7 @@ export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
   @Post()
+  @Auth(Role.ADMIN)
   create(@Body() createSkillDto: CreateSkillDto) {
     return this.skillsService.create(createSkillDto);
   }
@@ -33,11 +36,13 @@ export class SkillsController {
   }
 
   @Patch(':id')
+  @Auth(Role.ADMIN)
   update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto) {
     return this.skillsService.update(id, updateSkillDto);
   }
 
   @Delete(':id')
+  @Auth(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.skillsService.remove(id);
   }

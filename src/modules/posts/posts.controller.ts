@@ -9,6 +9,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Auth } from 'src/core/decorators';
+import { Role } from 'src/core/enums';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryPostDto } from './dto/query-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -19,6 +21,7 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
+  @Auth(Role.ADMIN, Role.EDITOR)
   create(@Body() createPostDto: CreatePostDto) {
     return this.postsService.create(createPostDto);
   }
@@ -34,6 +37,7 @@ export class PostsController {
   }
 
   @Patch(':id')
+  @Auth(Role.ADMIN, Role.EDITOR)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -42,6 +46,7 @@ export class PostsController {
   }
 
   @Delete(':id')
+  @Auth(Role.ADMIN)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.postsService.remove(id);
   }
