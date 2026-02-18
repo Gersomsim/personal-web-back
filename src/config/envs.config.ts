@@ -9,11 +9,7 @@ interface EnvSchema {
   DB_DATABASE: string;
 
   JWT_SECRET: string;
-  JWT_REFRESH_SECRET: string;
   JWT_EXPIRES_IN: string;
-  JWT_REFRESH_EXPIRES_IN: string;
-  JWT_FORGOT_PASSWORD_SECRET: string;
-  JWT_FORGOT_PASSWORD_EXPIRES_IN: string;
 
   APP_URL: string;
   NODE_ENV: string;
@@ -75,10 +71,8 @@ export const envs = {
     database: value.DB_DATABASE,
   },
   jwt: {
-    access: {
-      secret: value.JWT_SECRET,
-      expiration: value.JWT_EXPIRES_IN,
-    },
+    secret: value.JWT_SECRET,
+    expiration: value.JWT_EXPIRES_IN,
   },
   api: {
     port: value.PORT,
