@@ -29,8 +29,8 @@ export class CategoriesController {
 
   @Get()
   async findAll(@Query() query: QueryCategoryDto) {
-    const cats = await this.categoriesService.findAll(query);
-    return Response.success(cats, 'Categories retrieved successfully');
+    const { data, pagination } = await this.categoriesService.findAll(query);
+    return Response.success(data, '', pagination);
   }
 
   @Get(':id')

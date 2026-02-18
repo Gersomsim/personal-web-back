@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { setPagination } from 'src/core/utils';
 import { isUUID } from 'src/helpers';
+import { Pagination } from 'src/shared/interfaces';
 import { In, Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { QueryTagDto } from './dto/query-tag.dto';
@@ -18,8 +20,8 @@ export class TagsService {
     return this.tagRepository.save(tag);
   }
 
-  findAll(query: QueryTagDto) {
-    const { search, limit, order, type, page } = query;
+  async findAll(query: QueryTagDto): Promise<Pagination<Tag>> {
+    const { search, limit = 10, order, type, page = 1 } = query;
     const queryBuilder = this.tagRepository.createQueryBuilder('tag');
     if (search) {
       queryBuilder.andWhere('tag.name LIKE :search', { search: `%${search}%` });
@@ -30,14 +32,15 @@ export class TagsService {
     if (order) {
       queryBuilder.orderBy('tag.name', order);
     }
-    if (limit) {
-      queryBuilder.limit(limit);
-    }
-    if (page) {
-      queryBuilder.skip((page - 1) * limit);
-      queryBuilder.take(limit);
-    }
-    return queryBuilder.getMany();
+
+    queryBuilder.skip((page - 1) * limit);
+    queryBuilder.take(limit);
+
+    const [items, totalItems] = await queryBuilder.getManyAndCount();
+    return {
+      data: items,
+      pagination: setPagination(totalItems, limit, page, items.length),
+    };
   }
 
   async update(id: string, updateTagDto: UpdateTagDto) {

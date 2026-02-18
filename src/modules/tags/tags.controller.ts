@@ -29,8 +29,8 @@ export class TagsController {
 
   @Get()
   async findAll(@Query() query: QueryTagDto) {
-    const tag = await this.tagsService.findAll(query);
-    return Response.success(tag);
+    const { data, pagination } = await this.tagsService.findAll(query);
+    return Response.success(data, '', pagination);
   }
 
   @Get(':id')

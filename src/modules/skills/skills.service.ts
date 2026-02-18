@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { setPagination } from 'src/core/utils';
 import { isUUID } from 'src/helpers';
+import { Pagination } from 'src/shared/interfaces';
 import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
@@ -25,18 +27,15 @@ export class SkillsService {
       ...rest,
       category: categoryFound,
     });
-    return skill;
+    return this.skillsRepository.save(skill);
   }
 
-  findAll(query: QuerySkillDto) {
-    const { category, limit, order, search, page } = query;
+  async findAll(query: QuerySkillDto): Promise<Pagination<Skill>> {
+    const { category, limit = 10, order, search, page = 1 } = query;
     const queryBuilder = this.skillsRepository.createQueryBuilder('skill');
     if (category) {
       queryBuilder.leftJoinAndSelect('skill.category', 'category');
       queryBuilder.andWhere('category.slug = :category', { category });
-    }
-    if (limit) {
-      queryBuilder.limit(limit);
     }
     if (order) {
       queryBuilder.orderBy('skill.createdAt', order);
@@ -46,13 +45,17 @@ export class SkillsService {
         search: `%${search}%`,
       });
     }
-    if (page) {
-      queryBuilder.skip((page - 1) * limit);
-    }
+
     if (order) {
       queryBuilder.orderBy('skill.name', order);
     }
-    return queryBuilder.getMany();
+    queryBuilder.limit(limit);
+    queryBuilder.skip((page - 1) * limit);
+    const [items, totalItems] = await queryBuilder.getManyAndCount();
+    return {
+      data: items,
+      pagination: setPagination(totalItems, limit, page, items.length),
+    };
   }
 
   async findByIdOrSlug(id: string) {

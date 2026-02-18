@@ -30,8 +30,8 @@ export class PostsController {
 
   @Get()
   async findAll(@Query() query: QueryPostDto) {
-    const posts = await this.postsService.findAll(query);
-    return Response.success(posts);
+    const { data, pagination } = await this.postsService.findAll(query);
+    return Response.success(data, '', pagination);
   }
 
   @Get(':id')

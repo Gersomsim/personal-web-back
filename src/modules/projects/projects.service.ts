@@ -4,6 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { setPagination } from 'src/core/utils';
+import { Pagination } from 'src/shared/interfaces';
 import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { TagsService } from '../tags/tags.service';
@@ -32,8 +34,16 @@ export class ProjectsService {
     return this.projectRepository.save(project);
   }
 
-  async findAll(query: QueryProjectDto) {
-    const { limit, search, category, order, page, sort, tags: tag } = query;
+  async findAll(query: QueryProjectDto): Promise<Pagination<Project>> {
+    const {
+      limit = 10,
+      search,
+      category,
+      order,
+      page = 1,
+      sort,
+      tags: tag,
+    } = query;
     const queryBuilder = this.projectRepository.createQueryBuilder('project');
     if (search) {
       queryBuilder.andWhere('project.title ILIKE :search', {
@@ -48,15 +58,11 @@ export class ProjectsService {
         });
       }
     }
-    if (order) {
+    if (order && sort) {
       queryBuilder.orderBy(sort, order);
     }
-    if (page) {
-      queryBuilder.skip((page - 1) * limit);
-    }
-    if (limit) {
-      queryBuilder.take(limit);
-    }
+    queryBuilder.skip((page - 1) * limit);
+    queryBuilder.take(limit);
     if (tag) {
       const tagsArray = tag.split(',');
       queryBuilder.leftJoin('project.tags', 'tag');
@@ -64,7 +70,11 @@ export class ProjectsService {
         tags: tagsArray,
       });
     }
-    return queryBuilder.getManyAndCount();
+    const [items, totalItems] = await queryBuilder.getManyAndCount();
+    return {
+      data: items,
+      pagination: setPagination(totalItems, limit, page, items.length),
+    };
   }
 
   async findOneById(id: string) {

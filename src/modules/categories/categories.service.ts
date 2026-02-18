@@ -4,7 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { setPagination } from 'src/core/utils';
 import { generateSlug, isUUID } from 'src/helpers';
+import { Pagination } from 'src/shared/interfaces';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { QueryCategoryDto } from './dto/query-category.dto';
@@ -28,8 +30,8 @@ export class CategoriesService {
     return this.categoryRepository.save(category);
   }
 
-  findAll(query: QueryCategoryDto) {
-    const { type, search, sort, order, page, limit } = query;
+  async findAll(query: QueryCategoryDto): Promise<Pagination<Category>> {
+    const { type, search, sort, order, page = 1, limit = 10 } = query;
     const queryBuilder = this.categoryRepository.createQueryBuilder('category');
     if (type) {
       queryBuilder.andWhere('category.type = :type', { type });
@@ -42,13 +44,16 @@ export class CategoriesService {
     if (sort) {
       queryBuilder.orderBy(`category.${sort}`, order);
     }
-    if (page) {
-      queryBuilder.skip((page - 1) * limit);
-    }
-    if (limit) {
-      queryBuilder.take(limit);
-    }
-    return queryBuilder.getMany();
+
+    queryBuilder.skip((page - 1) * limit);
+    queryBuilder.take(limit);
+
+    const [items, totalItems] = await queryBuilder.getManyAndCount();
+
+    return {
+      data: items,
+      pagination: setPagination(totalItems, limit, page, items.length),
+    };
   }
 
   async findOne(id: string) {

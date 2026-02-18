@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { setPagination } from 'src/core/utils';
 import { isUUID } from 'src/helpers';
+import { Pagination } from 'src/shared/interfaces';
 import { Like, Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { Tag } from '../tags/entities/tag.entity';
@@ -39,7 +41,7 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
-  async findAll(query: QueryPostDto) {
+  async findAll(query: QueryPostDto): Promise<Pagination<Post>> {
     const { page = 1, limit = 10, search, category, tag, author } = query;
     const where = {};
     if (search) {
@@ -64,11 +66,15 @@ export class PostsService {
         where['author'] = authorFound;
       }
     }
-    return await this.postRepository.find({
+    const [items, totalItems] = await this.postRepository.findAndCount({
       where,
       take: limit,
       skip: (page - 1) * limit,
     });
+    return {
+      data: items,
+      pagination: setPagination(totalItems, limit, page, items.length),
+    };
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {

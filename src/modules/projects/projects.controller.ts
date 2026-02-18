@@ -30,8 +30,8 @@ export class ProjectsController {
 
   @Get()
   async findAll(@Query() query: QueryProjectDto) {
-    const pro = await this.projectsService.findAll(query);
-    return Response.success(pro);
+    const { data, pagination } = await this.projectsService.findAll(query);
+    return Response.success(data, '', pagination);
   }
 
   @Get(':id')

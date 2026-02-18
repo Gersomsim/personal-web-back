@@ -29,8 +29,8 @@ export class SkillsController {
 
   @Get()
   async findAll(@Query() query: QuerySkillDto) {
-    const skill = await this.skillsService.findAll(query);
-    return Response.success(skill);
+    const { data, pagination } = await this.skillsService.findAll(query);
+    return Response.success(data, '', pagination);
   }
 
   @Get(':id')
