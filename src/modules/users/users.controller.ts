@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Auth } from 'src/core/decorators';
 import { Role } from 'src/core/enums';
+import { Response } from 'src/core/utils';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -17,16 +18,18 @@ export class UsersController {
 
   @Get()
   @Auth(Role.ADMIN)
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    const users = await this.usersService.findAll();
+    return Response.success(users);
   }
 
   @Patch(':id')
   @Auth()
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(id, updateUserDto);
+    const user = await this.usersService.update(id, updateUserDto);
+    return Response.success(user, 'User updated successfully');
   }
 }

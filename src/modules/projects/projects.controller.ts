@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { Auth } from 'src/core/decorators';
 import { Role } from 'src/core/enums';
+import { Response } from 'src/core/utils';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -22,32 +23,37 @@ export class ProjectsController {
 
   @Post()
   @Auth(Role.ADMIN)
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  async create(@Body() createProjectDto: CreateProjectDto) {
+    const pro = await this.projectsService.create(createProjectDto);
+    return Response.success(pro, 'Project created successfully');
   }
 
   @Get()
-  findAll(@Query() query: QueryProjectDto) {
-    return this.projectsService.findAll(query);
+  async findAll(@Query() query: QueryProjectDto) {
+    const pro = await this.projectsService.findAll(query);
+    return Response.success(pro);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.findOneById(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    const pro = await this.projectsService.findOneById(id);
+    return Response.success(pro);
   }
 
   @Patch(':id')
   @Auth(Role.ADMIN)
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ) {
-    return this.projectsService.update(id, updateProjectDto);
+    const pro = await this.projectsService.update(id, updateProjectDto);
+    return Response.success(pro, 'Project updated successfully');
   }
 
   @Delete(':id')
   @Auth(Role.ADMIN)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    const pro = await this.projectsService.remove(id);
+    return Response.success(pro, 'Project deleted successfully');
   }
 }

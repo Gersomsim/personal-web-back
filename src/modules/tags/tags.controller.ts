@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Auth } from 'src/core/decorators';
 import { Role } from 'src/core/enums';
+import { Response } from 'src/core/utils';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { QueryTagDto } from './dto/query-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
@@ -21,29 +22,34 @@ export class TagsController {
 
   @Post()
   @Auth(Role.ADMIN, Role.EDITOR)
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagsService.create(createTagDto);
+  async create(@Body() createTagDto: CreateTagDto) {
+    const tag = await this.tagsService.create(createTagDto);
+    return Response.success(tag, 'Tag created successfully');
   }
 
   @Get()
-  findAll(@Query() query: QueryTagDto) {
-    return this.tagsService.findAll(query);
+  async findAll(@Query() query: QueryTagDto) {
+    const tag = await this.tagsService.findAll(query);
+    return Response.success(tag);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tagsService.findByIdOrSlug(id);
+  async findOne(@Param('id') id: string) {
+    const tag = await this.tagsService.findByIdOrSlug(id);
+    return Response.success(tag);
   }
 
   @Patch(':id')
   @Auth(Role.ADMIN)
-  update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
-    return this.tagsService.update(id, updateTagDto);
+  async update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
+    const tag = await this.tagsService.update(id, updateTagDto);
+    return Response.success(tag, 'Tag updated successfully');
   }
 
   @Delete(':id')
   @Auth(Role.ADMIN)
-  remove(@Param('id') id: string) {
-    return this.tagsService.remove(id);
+  async remove(@Param('id') id: string) {
+    const tag = await this.tagsService.remove(id);
+    return Response.success(tag, 'Tag deleted successfully');
   }
 }

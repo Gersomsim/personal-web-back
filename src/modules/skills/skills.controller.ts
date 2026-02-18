@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Auth } from 'src/core/decorators';
 import { Role } from 'src/core/enums';
+import { Response } from 'src/core/utils';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { QuerySkillDto } from './dto/query-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
@@ -21,29 +22,37 @@ export class SkillsController {
 
   @Post()
   @Auth(Role.ADMIN)
-  create(@Body() createSkillDto: CreateSkillDto) {
-    return this.skillsService.create(createSkillDto);
+  async create(@Body() createSkillDto: CreateSkillDto) {
+    const skill = await this.skillsService.create(createSkillDto);
+    return Response.success(skill, 'Skill created successfully');
   }
 
   @Get()
-  findAll(@Query() query: QuerySkillDto) {
-    return this.skillsService.findAll(query);
+  async findAll(@Query() query: QuerySkillDto) {
+    const skill = await this.skillsService.findAll(query);
+    return Response.success(skill);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.skillsService.findByIdOrSlug(id);
+  async findOne(@Param('id') id: string) {
+    const skill = await this.skillsService.findByIdOrSlug(id);
+    return Response.success(skill);
   }
 
   @Patch(':id')
   @Auth(Role.ADMIN)
-  update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto) {
-    return this.skillsService.update(id, updateSkillDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateSkillDto: UpdateSkillDto,
+  ) {
+    const skill = await this.skillsService.update(id, updateSkillDto);
+    return Response.success(skill, 'Skill updated successfully');
   }
 
   @Delete(':id')
   @Auth(Role.ADMIN)
-  remove(@Param('id') id: string) {
-    return this.skillsService.remove(id);
+  async remove(@Param('id') id: string) {
+    const skill = await this.skillsService.remove(id);
+    return Response.success(skill, 'Skill deleted successfully');
   }
 }

@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { Auth } from 'src/core/decorators';
 import { Role } from 'src/core/enums';
+import { Response } from 'src/core/utils';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryPostDto } from './dto/query-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -22,32 +23,37 @@ export class PostsController {
 
   @Post()
   @Auth(Role.ADMIN, Role.EDITOR)
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  async create(@Body() createPostDto: CreatePostDto) {
+    const post = await this.postsService.create(createPostDto);
+    return Response.success(post, 'Post created successfully');
   }
 
   @Get()
-  findAll(@Query() query: QueryPostDto) {
-    return this.postsService.findAll(query);
+  async findAll(@Query() query: QueryPostDto) {
+    const posts = await this.postsService.findAll(query);
+    return Response.success(posts);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findByIdOrSlug(id);
+  async findOne(@Param('id') id: string) {
+    const post = await this.postsService.findByIdOrSlug(id);
+    return Response.success(post);
   }
 
   @Patch(':id')
   @Auth(Role.ADMIN, Role.EDITOR)
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    return this.postsService.update(id, updatePostDto);
+    const post = await this.postsService.update(id, updatePostDto);
+    return Response.success(post, 'Post updated successfully');
   }
 
   @Delete(':id')
   @Auth(Role.ADMIN)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.postsService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    const post = await this.postsService.remove(id);
+    return Response.success(post, 'Post deleted successfully');
   }
 }

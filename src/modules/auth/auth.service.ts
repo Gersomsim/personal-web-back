@@ -29,7 +29,12 @@ export class AuthService {
       password: passwordHash,
     });
     if (user.role === 'commenter') {
-      // Regresamos una sesion
+      return {
+        message:
+          'User created successfully, you can login when approved by admin',
+        user,
+        token: this.generateToken(user.id),
+      };
     } else {
       return {
         message:

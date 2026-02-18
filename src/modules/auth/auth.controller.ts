@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Auth, GetUser } from 'src/core/decorators';
+import { Response } from 'src/core/utils';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -10,17 +11,20 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  async login(@Body() loginDto: LoginDto) {
+    const { message, ...session } = await this.authService.login(loginDto);
+    return Response.success(session, message);
   }
 
   @Post('register')
-  register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterDto) {
+    const { message, ...user } = await this.authService.register(registerDto);
+    return Response.success(user, message);
   }
   @Get('refresh')
   @Auth()
-  refreshToken(@GetUser() user: User) {
-    return this.authService.refreshToken(user);
+  async refreshToken(@GetUser() user: User) {
+    const { message, ...session } = await this.authService.refreshToken(user);
+    return Response.success(session);
   }
 }

@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Auth } from 'src/core/decorators';
 import { Role } from 'src/core/enums';
+import { Response } from 'src/core/utils';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { QueryCategoryDto } from './dto/query-category.dto';
@@ -21,32 +22,37 @@ export class CategoriesController {
 
   @Post()
   @Auth(Role.ADMIN, Role.EDITOR)
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
+    const cat = await this.categoriesService.create(createCategoryDto);
+    return Response.success(cat);
   }
 
   @Get()
-  findAll(@Query() query: QueryCategoryDto) {
-    return this.categoriesService.findAll(query);
+  async findAll(@Query() query: QueryCategoryDto) {
+    const cats = await this.categoriesService.findAll(query);
+    return Response.success(cats, 'Categories retrieved successfully');
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const cat = await this.categoriesService.findOne(id);
+    return Response.success(cat);
   }
 
   @Patch(':id')
   @Auth(Role.ADMIN)
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(id, updateCategoryDto);
+    const cat = await this.categoriesService.update(id, updateCategoryDto);
+    return Response.success(cat, 'Category updated successfully');
   }
 
   @Delete(':id')
   @Auth(Role.ADMIN)
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(id);
+  async remove(@Param('id') id: string) {
+    const cat = await this.categoriesService.remove(id);
+    return Response.success(cat, 'Category deleted successfully');
   }
 }
