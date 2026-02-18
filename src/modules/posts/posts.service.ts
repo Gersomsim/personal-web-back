@@ -64,7 +64,7 @@ export class PostsService {
         where['author'] = authorFound;
       }
     }
-    return await this.postRepository.findAndCount({
+    return await this.postRepository.find({
       where,
       take: limit,
       skip: (page - 1) * limit,
