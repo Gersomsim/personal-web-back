@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -50,6 +51,17 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
     const { password, ...rest } = user;
+    return {
+      message: 'User logged in successfully',
+      user: rest,
+      token: this.generateToken(user.id),
+    };
+  }
+  refreshToken(user: User) {
+    const { password, ...rest } = user;
+    if (!user.isActive) {
+      throw new UnauthorizedException('User is not active');
+    }
     return {
       message: 'User logged in successfully',
       user: rest,
