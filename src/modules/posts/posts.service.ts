@@ -28,15 +28,13 @@ export class PostsService {
     if (postWithSlug) {
       throw new Error('Post already exists');
     }
-    const { categoryId, tagsId, authorId } = payload;
+    const { categoryId, authorId } = payload;
     const category = await this.getCategory(categoryId);
     const author = await this.usersService.findById(authorId);
-    const tags = await this.getTags(tagsId);
     const post = this.postRepository.create({
       ...payload,
       category: category!,
       author: author!,
-      tags: tags,
     });
     return await this.postRepository.save(post);
   }

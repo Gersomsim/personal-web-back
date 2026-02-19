@@ -26,7 +26,13 @@ export class Post {
   slug: string;
 
   @Column({ type: 'varchar', length: 255 })
-  summary: string;
+  excerpt: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  readTime: string;
+
+  @Column({ type: 'boolean', default: false })
+  featured: boolean;
 
   @Column({ type: 'varchar', length: 255 })
   descriptionSeo: string;
@@ -40,11 +46,13 @@ export class Post {
   @Column({ type: 'varchar', length: 100, nullable: true })
   image: string;
 
-  @ManyToOne(() => User, (user: User) => user.posts)
+  @ManyToOne(() => User, (user: User) => user.posts, { eager: true })
   @JoinColumn({ name: 'user_id' })
   author: User;
 
-  @ManyToOne(() => Category, (category: Category) => category.posts)
+  @ManyToOne(() => Category, (category: Category) => category.posts, {
+    eager: true,
+  })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
@@ -57,7 +65,7 @@ export class Post {
   updatedAt: Date;
 
   //Relations
-  @ManyToMany(() => Tag, (tag: Tag) => tag.posts)
+  @ManyToMany(() => Tag, (tag: Tag) => tag.posts, { eager: true })
   @JoinTable({ name: 'post_tags' })
   tags: Tag[];
 }

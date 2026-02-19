@@ -1,4 +1,10 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entity';
 import { User } from 'src/modules/users/entities/user.entity';
@@ -14,7 +20,15 @@ export class CreatePostDto {
 
   @IsString()
   @IsNotEmpty()
-  summary: string;
+  excerpt: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readTime: string;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  featured: boolean;
 
   @IsString()
   @IsNotEmpty()
