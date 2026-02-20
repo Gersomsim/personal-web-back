@@ -32,9 +32,14 @@ export class CategoriesService {
 
   async findAll(query: QueryCategoryDto): Promise<Pagination<Category>> {
     const { type, search, sort, order, page = 1, limit = 10 } = query;
+    console.log(type);
+
     const queryBuilder = this.categoryRepository.createQueryBuilder('category');
     if (type) {
       queryBuilder.andWhere('category.type = :type', { type });
+      if (type === 'skill') {
+        queryBuilder.leftJoinAndSelect('category.skills', 'skill');
+      }
     }
     if (search) {
       queryBuilder.andWhere('category.name LIKE :search', {
