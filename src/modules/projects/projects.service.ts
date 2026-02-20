@@ -42,11 +42,14 @@ export class ProjectsService {
   }
 
   async findAll(query: QueryProjectDto): Promise<Pagination<Project>> {
-    const { limit = 10, search, category, page = 1 } = query;
+    const { limit = 10, search, category, page = 1, featured } = query;
     const where: FindOptionsWhere<Project> = {};
 
     if (search) {
       where.title = Like(`%${search}%`);
+    }
+    if (featured) {
+      where.featured = featured;
     }
     if (category) {
       const categoryFound = await this.categoryService.findBySlugOrId(category);

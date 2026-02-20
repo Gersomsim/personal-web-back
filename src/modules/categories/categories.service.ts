@@ -32,7 +32,6 @@ export class CategoriesService {
 
   async findAll(query: QueryCategoryDto): Promise<Pagination<Category>> {
     const { type, search, sort, order, page = 1, limit = 10 } = query;
-    console.log(type);
 
     const queryBuilder = this.categoryRepository.createQueryBuilder('category');
     if (type) {
