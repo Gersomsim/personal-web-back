@@ -28,13 +28,18 @@ export class PostsService {
     if (postWithSlug) {
       throw new Error('Post already exists');
     }
-    const { categoryId, authorId } = payload;
+    const { categoryId } = payload;
     const category = await this.getCategory(categoryId);
-    const author = await this.usersService.findById(authorId);
+    let tags: Tag[] = [];
+    if (payload.tagsId) {
+      tags = await this.getTags(payload.tagsId);
+      console.log(tags);
+    }
+
     const post = this.postRepository.create({
       ...payload,
       category: category!,
-      author: author!,
+      tags: tags,
     });
     return await this.postRepository.save(post);
   }
@@ -68,6 +73,9 @@ export class PostsService {
       where,
       take: limit,
       skip: (page - 1) * limit,
+      order: {
+        createdAt: 'DESC',
+      },
     });
     return {
       data: items,
@@ -86,7 +94,8 @@ export class PostsService {
     if (tagsId) {
       tags = await this.getTags(tagsId);
     }
-    return await this.postRepository.update(id, {
+    return await this.postRepository.save({
+      ...post,
       ...updatePostDto,
       category: category!,
       tags: tags,
@@ -98,7 +107,7 @@ export class PostsService {
     if (!post) {
       throw new NotFoundException(`Post with ID "${id}" not found`);
     }
-    return post;
+    return await this.postRepository.remove(post);
   }
 
   async findByIdOrSlug(identifier: string) {

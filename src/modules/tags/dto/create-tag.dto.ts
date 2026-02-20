@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateTagDto {
   @IsNotEmpty()
@@ -9,7 +9,7 @@ export class CreateTagDto {
   @IsIn(['blog', 'project'])
   type: 'blog' | 'project';
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 }

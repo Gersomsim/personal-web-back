@@ -9,9 +9,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Auth } from 'src/core/decorators';
+import { Auth, GetUser } from 'src/core/decorators';
 import { Role } from 'src/core/enums';
 import { Response } from 'src/core/utils';
+import { User } from '../users/entities/user.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { QueryPostDto } from './dto/query-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -23,7 +24,8 @@ export class PostsController {
 
   @Post()
   @Auth(Role.ADMIN, Role.EDITOR)
-  async create(@Body() createPostDto: CreatePostDto) {
+  async create(@Body() createPostDto: CreatePostDto, @GetUser() user: User) {
+    createPostDto.author = user;
     const post = await this.postsService.create(createPostDto);
     return Response.success(post, 'Post created successfully');
   }

@@ -47,7 +47,8 @@ export class Tag {
   @BeforeInsert()
   @BeforeUpdate()
   generateSlug() {
-    this.slug = this.name
+    const composition = `${this.type} ${this.name}`;
+    this.slug = composition
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-')

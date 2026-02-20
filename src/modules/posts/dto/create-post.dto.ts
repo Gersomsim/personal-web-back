@@ -43,10 +43,6 @@ export class CreatePostDto {
   content: string;
 
   @IsString()
-  @IsNotEmpty()
-  authorId: string;
-
-  @IsString()
   @IsOptional()
   image?: string;
 

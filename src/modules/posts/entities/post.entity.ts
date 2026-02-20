@@ -25,7 +25,7 @@ export class Post {
   @Column({ type: 'varchar', length: 255, unique: true })
   slug: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'text' })
   excerpt: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -34,7 +34,7 @@ export class Post {
   @Column({ type: 'boolean', default: false })
   featured: boolean;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'text' })
   descriptionSeo: string;
 
   @Column({ type: 'varchar', length: 255 })
