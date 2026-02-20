@@ -15,48 +15,72 @@ export class CreateProjectDto {
   @IsString()
   title: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   subtitle: string;
 
   @IsNotEmpty()
   @IsString()
-  summary: string;
+  description: string;
+
+  @IsOptional()
+  @IsString()
+  problem: string;
+
+  @IsOptional()
+  @IsString()
+  solution: string;
 
   @IsString()
   @IsOptional()
   image: string;
 
-  @IsString()
   @IsOptional()
-  link: string;
+  @IsArray()
+  tagsId: string[];
 
-  @IsIn(['project', 'experiment'])
-  type: 'project' | 'experiment';
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
 
   @IsOptional()
   @IsString()
   metrics: string;
+
+  @IsIn(['project', 'experiment'])
+  type: 'project' | 'experiment';
 
   @IsNotEmpty()
   @IsString()
   categoryId: string;
 
   @IsNotEmpty()
+  @IsBoolean()
+  featured: boolean;
+
+  @IsOptional()
   @IsString()
-  role: string;
+  liveUrl: string;
+
+  @IsOptional()
+  @IsString()
+  repoUrl: string;
 
   @IsNotEmpty()
   @IsBoolean()
   repoPrivate: boolean;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  content: string;
+  role: string;
 
   @IsOptional()
   @IsString()
-  repoLink: string;
+  duration: string;
+
+  @IsOptional()
+  @IsString()
+  team: string;
 
   @IsNotEmpty()
   @IsDate()
@@ -64,7 +88,13 @@ export class CreateProjectDto {
 
   @IsOptional()
   @IsArray()
-  tagsId: string[];
+  @IsString({ each: true })
+  learnings: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  features: string[];
 
   category: Category;
   tags: Tag[];

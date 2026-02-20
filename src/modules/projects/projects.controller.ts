@@ -35,8 +35,8 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const pro = await this.projectsService.findOneById(id);
+  async findOne(@Param('id') id: string) {
+    const pro = await this.projectsService.findOne(id);
     return Response.success(pro);
   }
 

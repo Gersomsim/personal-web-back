@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entity';
+import { TechStack } from 'src/modules/tech-stacks/entities/tech-stack.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,9 +10,12 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProjectChallenge } from './project-challenge.entity';
+import { ProjectResult } from './project-result.entity';
 
 @Entity('projects')
 export class Project {
@@ -21,17 +25,23 @@ export class Project {
   @Column({ type: 'varchar', length: 100 })
   title: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   subtitle: string;
 
   @Column({ type: 'varchar', length: 250 })
-  summary: string;
+  description: string;
+
+  @Column({ type: 'text', nullable: true })
+  problem: string;
+
+  @Column({ type: 'text', nullable: true })
+  solution: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   image: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  link: string;
+  @Column({ type: 'varchar', length: 250, nullable: true, unique: true })
+  slug: string;
 
   @Column({ type: 'varchar', length: 100, default: 'project' })
   type: 'project' | 'experiment';
@@ -39,24 +49,44 @@ export class Project {
   @Column({ type: 'varchar', length: 100, nullable: true })
   metrics: string;
 
-  @ManyToOne(() => Category, (category: Category) => category.projects)
+  @ManyToOne(() => Category, (category: Category) => category.projects, {
+    eager: true,
+  })
   @JoinColumn({ name: 'category_id' })
   category: Category;
+
+  @Column({ type: 'boolean', default: false })
+  featured: boolean;
+
+  @Column({ type: 'varchar', length: 250, nullable: true })
+  liveUrl: string;
+
+  @Column({ type: 'varchar', length: 250, nullable: true })
+  repoUrl: string;
+
+  @Column({ type: 'boolean', default: true })
+  repoPrivate: boolean;
 
   @Column({ type: 'varchar', length: 100 })
   role: string;
 
-  @Column({ type: 'boolean', default: false })
-  repoPrivate: boolean;
-
-  @Column({ type: 'text', nullable: true })
-  content: string;
-
   @Column({ type: 'varchar', length: 100, nullable: true })
-  repoLink: string;
+  team: string;
 
   @Column({ type: 'date' })
   developedAt: Date;
+
+  @Column({ type: 'json', nullable: true })
+  gallery: string[];
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  duration: string;
+
+  @Column({ type: 'simple-array', nullable: true })
+  features: string[];
+
+  @Column({ type: 'simple-array', nullable: true })
+  learnings: string[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Exclude()
@@ -66,7 +96,21 @@ export class Project {
   @Exclude()
   updatedAt: Date;
 
-  @ManyToMany(() => Tag, (tag: Tag) => tag.projects)
+  @OneToMany(() => ProjectChallenge, (challenge) => challenge.project, {
+    eager: true,
+  })
+  challenges: ProjectChallenge[];
+
+  @OneToMany(() => ProjectResult, (result) => result.project, { eager: true })
+  results: ProjectResult[];
+
+  @ManyToMany(() => Tag, (tag: Tag) => tag.projects, { eager: true })
   @JoinTable({ name: 'project_tags' })
   tags: Tag[];
+
+  @ManyToMany(() => TechStack, (techStack) => techStack.projects, {
+    eager: true,
+  })
+  @JoinTable({ name: 'project_tech_stack' })
+  techStack: TechStack[];
 }

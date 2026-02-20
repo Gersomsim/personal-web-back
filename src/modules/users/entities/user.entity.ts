@@ -5,8 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -46,8 +45,7 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToMany(() => Post, (post: Post) => post.author)
-  @JoinTable({ name: 'user_posts' })
+  @OneToMany(() => Post, (post: Post) => post.author)
   posts: Post[];
 
   @BeforeInsert()

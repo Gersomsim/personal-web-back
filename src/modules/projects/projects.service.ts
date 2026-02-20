@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { setPagination } from 'src/core/utils';
+import { isUUID } from 'src/helpers';
 import { Pagination } from 'src/shared/interfaces';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { TagsService } from '../tags/tags.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -30,56 +31,45 @@ export class ProjectsService {
       throw new BadRequestException('Category not found');
     }
     const tags = await this.getTags(tagsId);
-    const project = this.projectRepository.create({ ...rest, category, tags });
+    console.log(tags);
+
+    const project = this.projectRepository.create({
+      ...rest,
+      category: category,
+      tags: tags,
+    });
     return this.projectRepository.save(project);
   }
 
   async findAll(query: QueryProjectDto): Promise<Pagination<Project>> {
-    const {
-      limit = 10,
-      search,
-      category,
-      order,
-      page = 1,
-      sort,
-      tags: tag,
-    } = query;
-    const queryBuilder = this.projectRepository.createQueryBuilder('project');
+    const { limit = 10, search, category, page = 1 } = query;
+    const where: FindOptionsWhere<Project> = {};
+
     if (search) {
-      queryBuilder.andWhere('project.title ILIKE :search', {
-        search: `%${search}%`,
-      });
+      where.title = Like(`%${search}%`);
     }
     if (category) {
       const categoryFound = await this.categoryService.findBySlugOrId(category);
       if (categoryFound) {
-        queryBuilder.andWhere('category = :category', {
-          category: categoryFound,
-        });
+        where.category = categoryFound;
       }
     }
-    if (order && sort) {
-      queryBuilder.orderBy(sort, order);
-    }
-    queryBuilder.skip((page - 1) * limit);
-    queryBuilder.take(limit);
-    if (tag) {
-      const tagsArray = tag.split(',');
-      queryBuilder.leftJoin('project.tags', 'tag');
-      queryBuilder.andWhere('tag.slug IN (:...tags)', {
-        tags: tagsArray,
-      });
-    }
-    const [items, totalItems] = await queryBuilder.getManyAndCount();
+
+    const [items, totalItems] = await this.projectRepository.findAndCount({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+    });
     return {
       data: items,
       pagination: setPagination(totalItems, limit, page, items.length),
     };
   }
 
-  async findOneById(id: string) {
+  async findOne(id: string) {
+    const UUID = isUUID(id);
     const project = await this.projectRepository.findOne({
-      where: { id },
+      where: UUID ? { id } : { slug: id },
     });
     if (!project) {
       throw new NotFoundException('Project not found');
@@ -88,10 +78,7 @@ export class ProjectsService {
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {
-    const project = await this.findOneById(id);
-    if (!project) {
-      throw new NotFoundException('Project not found');
-    }
+    const project = await this.findOne(id);
     const { categoryId, ...rest } = updateProjectDto;
     if (categoryId) {
       const category = await this.categoryService.findBySlugOrId(categoryId);
