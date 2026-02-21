@@ -51,7 +51,8 @@ export class Category {
   @BeforeInsert()
   @BeforeUpdate()
   generateSlug() {
-    this.slug = this.name
+    const fullSlug = `${this.type}-${this.name}`;
+    this.slug = fullSlug
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-')

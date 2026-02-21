@@ -1,18 +1,20 @@
 import { Exclude } from 'class-transformer';
-import { Project } from 'src/modules/projects/entities/project.entity';
+
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Project } from './project.entity';
 
-@Entity('tech_stacks')
-export class TechStack {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+@Entity('project_tech_stacks')
+export class ProjectTechStack {
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column({ type: 'varchar', length: 100 })
   category: string;
@@ -28,6 +30,7 @@ export class TechStack {
   @Exclude()
   updatedAt: Date;
 
-  @ManyToMany(() => Project, (project) => project.techStack)
-  projects: Project[];
+  @ManyToOne(() => Project, (project) => project.techStack)
+  @JoinColumn({ name: 'project_id' })
+  project: Project;
 }

@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Category } from 'src/modules/categories/entities/category.entity';
+import { ProjectTechStack } from 'src/modules/projects/entities/project-tech-stack.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entity';
-import { TechStack } from 'src/modules/tech-stacks/entities/tech-stack.entity';
 import {
   Column,
   CreateDateColumn,
@@ -82,10 +82,10 @@ export class Project {
   @Column({ type: 'varchar', length: 100, nullable: true })
   duration: string;
 
-  @Column({ type: 'simple-array', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   features: string[];
 
-  @Column({ type: 'simple-array', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   learnings: string[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -108,9 +108,8 @@ export class Project {
   @JoinTable({ name: 'project_tags' })
   tags: Tag[];
 
-  @ManyToMany(() => TechStack, (techStack) => techStack.projects, {
+  @OneToMany(() => ProjectTechStack, (techStack) => techStack.project, {
     eager: true,
   })
-  @JoinTable({ name: 'project_tech_stack' })
-  techStack: TechStack[];
+  techStack: ProjectTechStack[];
 }

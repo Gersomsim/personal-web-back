@@ -9,6 +9,7 @@ import { isUUID } from 'src/helpers';
 import { Pagination } from 'src/shared/interfaces';
 import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
+import { Tag } from '../tags/entities/tag.entity';
 import { TagsService } from '../tags/tags.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
@@ -82,7 +83,7 @@ export class ProjectsService {
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {
     const project = await this.findOne(id);
-    const { categoryId, ...rest } = updateProjectDto;
+    const { categoryId, tagsId, ...rest } = updateProjectDto;
     if (categoryId) {
       const category = await this.categoryService.findBySlugOrId(categoryId);
       if (!category) {
@@ -90,8 +91,12 @@ export class ProjectsService {
       }
       project.category = category;
     }
-    this.projectRepository.merge(project, rest);
-    return this.projectRepository.save(project);
+    let tags: Tag[] = [];
+    if (tagsId) {
+      tags = await this.getTags(tagsId);
+      console.log('tags', tags);
+    }
+    return this.projectRepository.save({ ...project, ...rest, tags });
   }
 
   remove(id: string) {

@@ -10,7 +10,6 @@ import { ProjectsModule } from './modules/projects/projects.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { UsersModule } from './modules/users/users.module';
-import { TechStacksModule } from './modules/tech-stacks/tech-stacks.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { TechStacksModule } from './modules/tech-stacks/tech-stacks.module';
     ProjectsModule,
     AuthModule,
     SkillsModule,
-    TechStacksModule,
   ],
   controllers: [],
   providers: [
