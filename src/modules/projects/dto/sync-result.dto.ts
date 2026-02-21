@@ -4,7 +4,7 @@ import { IsArray } from 'class-validator';
 export class SyncResultDto {
   @IsArray()
   @Type(() => ResultDto)
-  result: ResultDto[];
+  results: ResultDto[];
 }
 
 export class ResultDto {

@@ -97,7 +97,7 @@ export class ProjectsController {
       'Project challenges synced successfully',
     );
   }
-  @Patch('sync-result/:id')
+  @Patch('sync-results/:id')
   @Auth(Role.ADMIN)
   async syncResult(
     @Param('id', ParseUUIDPipe) id: string,

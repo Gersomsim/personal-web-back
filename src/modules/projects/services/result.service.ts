@@ -17,7 +17,7 @@ export class ResultService {
     syncResultDto: SyncResultDto,
   ): Promise<ProjectResult[]> {
     const projectId = project.id;
-    const resultDto = syncResultDto.result;
+    const resultDto = syncResultDto.results;
 
     return await this.resultRepository.manager.transaction(
       async (transactionalEntityManager) => {
