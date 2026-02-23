@@ -7,6 +7,8 @@ interface EnvSchema {
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
 
+  API_KEY: string;
+
   APP_URL: string;
   NODE_ENV: string;
   PORT: number;
@@ -25,6 +27,8 @@ interface EnvSchema {
 const envsSchema = joi
   .object<EnvSchema>({
     DB_CONEXION: joi.string().required(),
+
+    API_KEY: joi.string().required(),
 
     JWT_SECRET: joi.string().required(),
     JWT_EXPIRES_IN: joi.string().required(),
@@ -78,5 +82,8 @@ export const envs = {
   throttle: {
     ttl: value.THROTTLE_TTL,
     limit: value.THROTTLE_LIMIT,
+  },
+  key: {
+    api: value.API_KEY,
   },
 };
