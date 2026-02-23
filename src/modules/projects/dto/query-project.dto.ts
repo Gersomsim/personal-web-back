@@ -1,4 +1,10 @@
-import { IsBoolean, IsIn, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsIn,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class QueryProjectDto {
   @IsOptional()
@@ -28,4 +34,8 @@ export class QueryProjectDto {
   @IsOptional()
   @IsBoolean()
   featured: boolean;
+
+  @IsOptional()
+  @IsString()
+  type: 'project' | 'experiment';
 }
