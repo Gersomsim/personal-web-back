@@ -43,6 +43,9 @@ export class Post {
   @Column({ type: 'text' })
   content: string;
 
+  @Column({ type: 'int', default: 0 })
+  sometimesRead: number;
+
   @Column({ type: 'varchar', length: 100, nullable: true })
   image: string;
 

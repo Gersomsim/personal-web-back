@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class QueryPostDto {
   @IsOptional()
@@ -24,4 +24,8 @@ export class QueryPostDto {
   @IsOptional()
   @IsString()
   author: string;
+
+  @IsOptional()
+  @IsBoolean()
+  mostRead: boolean;
 }

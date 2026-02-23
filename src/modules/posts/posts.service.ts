@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { setPagination } from 'src/core/utils';
 import { isUUID } from 'src/helpers';
 import { Pagination } from 'src/shared/interfaces';
-import { Like, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { Tag } from '../tags/entities/tag.entity';
 import { TagsService } from '../tags/tags.service';
@@ -45,8 +45,22 @@ export class PostsService {
   }
 
   async findAll(query: QueryPostDto): Promise<Pagination<Post>> {
-    const { page = 1, limit = 10, search, category, tag, author } = query;
-    const where = {};
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      category,
+      tag,
+      author,
+      mostRead,
+    } = query;
+    const where: FindOptionsWhere<Post> = {};
+    const order: FindOptionsOrder<Post> = {};
+    if (mostRead) {
+      order.sometimesRead = 'DESC';
+    } else {
+      order.createdAt = 'DESC';
+    }
     if (search) {
       where['title'] = Like(`%${search}%`);
     }
@@ -73,9 +87,7 @@ export class PostsService {
       where,
       take: limit,
       skip: (page - 1) * limit,
-      order: {
-        createdAt: 'DESC',
-      },
+      order,
     });
     return {
       data: items,
@@ -125,5 +137,13 @@ export class PostsService {
   private async getCategory(categoryId: string) {
     const category = await this.categoriesService.findBySlugOrId(categoryId);
     return category;
+  }
+  async markAsRead(id: string) {
+    const post = await this.postRepository.findOneBy({ id });
+    if (!post) {
+      throw new NotFoundException(`Post with ID "${id}" not found`);
+    }
+    post.sometimesRead++;
+    await this.postRepository.save(post);
   }
 }
