@@ -67,8 +67,10 @@ export class PostsService {
     if (category) {
       const categoryFound =
         await this.categoriesService.findBySlugOrId(category);
+      console.log({ categoryFound });
+
       if (categoryFound) {
-        where['category'] = categoryFound;
+        where.category = { id: categoryFound.id } as any;
       }
     }
     if (tag) {

@@ -58,7 +58,7 @@ export class PostsController {
     const post = await this.postsService.remove(id);
     return Response.success(post, 'Post deleted successfully');
   }
-  @Patch(':id/mark-as-read')
+  @Patch(':id/mark-as-readed')
   async markAsRead(@Param('id', ParseUUIDPipe) id: string) {
     await this.postsService.markAsRead(id);
     return Response.success(null, 'Post marked as read successfully');
