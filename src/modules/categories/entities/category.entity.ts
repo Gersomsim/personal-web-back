@@ -58,4 +58,7 @@ export class Category {
       .replace(/\s+/g, '-')
       .replace(/[^a-zA-Z0-9-]/g, '');
   }
+
+  //vitrual properties
+  postsCount?: number;
 }

@@ -39,6 +39,12 @@ export class CategoriesService {
       if (type === 'skill') {
         queryBuilder.leftJoinAndSelect('category.skills', 'skill');
       }
+      if (type === 'blog') {
+        queryBuilder.loadRelationCountAndMap(
+          'category.postsCount',
+          'category.posts',
+        );
+      }
     }
     if (search) {
       queryBuilder.andWhere('category.name LIKE :search', {
