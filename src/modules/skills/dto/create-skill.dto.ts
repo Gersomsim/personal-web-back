@@ -8,19 +8,11 @@ export class CreateSkillDto {
 
   @IsString()
   @IsOptional()
-  content: string;
+  description: string;
 
   @IsString()
   @IsOptional()
   image: string;
-
-  @IsString()
-  @IsOptional()
-  certificate: string;
-
-  @IsString()
-  @IsOptional()
-  certificateUrl: string;
 
   @IsNotEmpty()
   @IsUUID()

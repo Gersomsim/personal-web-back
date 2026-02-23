@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { setPagination } from 'src/core/utils';
-import { isUUID } from 'src/helpers';
 import { Pagination } from 'src/shared/interfaces';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { QuerySkillDto } from './dto/query-skill.dto';
@@ -32,26 +31,21 @@ export class SkillsService {
 
   async findAll(query: QuerySkillDto): Promise<Pagination<Skill>> {
     const { category, limit = 10, order, search, page = 1 } = query;
-    const queryBuilder = this.skillsRepository.createQueryBuilder('skill');
+    const where: FindOptionsWhere<Skill> = {};
     if (category) {
-      queryBuilder.leftJoinAndSelect('skill.category', 'category');
-      queryBuilder.andWhere('category.slug = :category', { category });
-    }
-    if (order) {
-      queryBuilder.orderBy('skill.createdAt', order);
+      where.category = { slug: category };
     }
     if (search) {
-      queryBuilder.andWhere('skill.name LIKE :search', {
-        search: `%${search}%`,
-      });
+      where.name = Like(`%${search}%`);
     }
 
-    if (order) {
-      queryBuilder.orderBy('skill.name', order);
-    }
-    queryBuilder.limit(limit);
-    queryBuilder.skip((page - 1) * limit);
-    const [items, totalItems] = await queryBuilder.getManyAndCount();
+    const [items, totalItems] = await this.skillsRepository.findAndCount({
+      where,
+      relations: { category: true },
+      order: { name: order },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
     return {
       data: items,
       pagination: setPagination(totalItems, limit, page, items.length),
@@ -59,9 +53,10 @@ export class SkillsService {
   }
 
   async findByIdOrSlug(id: string) {
-    const UUID = isUUID(id);
+    const isNumber = !isNaN(Number(id));
+    const idNumber = Number(id);
     const skill = await this.skillsRepository.findOne({
-      where: UUID ? { id } : { slug: id },
+      where: isNumber ? { id: idNumber } : { slug: id },
       relations: { category: true },
     });
     if (!skill) throw new NotFoundException(`Skill with ${id} not found`);

@@ -14,8 +14,8 @@ import {
 
 @Entity('skills')
 export class Skill {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column({ type: 'varchar', length: 100 })
   name: string;
@@ -24,19 +24,13 @@ export class Skill {
   slug: string;
 
   @Column({ type: 'text', nullable: true })
-  content: string;
+  description: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   image: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  certificate: string;
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  certificateUrl: string;
-
-  @ManyToOne(() => Category, (category) => category.skills)
-  @JoinColumn({ name: 'categoryId' })
+  @ManyToOne(() => Category, (category) => category.skills, { eager: true })
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
