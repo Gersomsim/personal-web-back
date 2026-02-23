@@ -2,11 +2,7 @@ import 'dotenv/config';
 import * as joi from 'joi';
 
 interface EnvSchema {
-  DB_HOST: string;
-  DB_PORT: number;
-  DB_USERNAME: string;
-  DB_PASSWORD: string;
-  DB_DATABASE: string;
+  DB_CONEXION: string;
 
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
@@ -28,11 +24,7 @@ interface EnvSchema {
 
 const envsSchema = joi
   .object<EnvSchema>({
-    DB_HOST: joi.string().required(),
-    DB_PORT: joi.number().required(),
-    DB_USERNAME: joi.string().required(),
-    DB_PASSWORD: joi.string().required(),
-    DB_DATABASE: joi.string().required(),
+    DB_CONEXION: joi.string().required(),
 
     JWT_SECRET: joi.string().required(),
     JWT_EXPIRES_IN: joi.string().required(),
@@ -64,11 +56,7 @@ if (error) {
 
 export const envs = {
   database: {
-    host: value.DB_HOST,
-    port: value.DB_PORT,
-    username: value.DB_USERNAME,
-    password: value.DB_PASSWORD,
-    database: value.DB_DATABASE,
+    url: value.DB_CONEXION,
   },
   jwt: {
     secret: value.JWT_SECRET,
