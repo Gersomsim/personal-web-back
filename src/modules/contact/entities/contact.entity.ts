@@ -8,27 +8,27 @@ import {
 
 @Entity()
 export class Contact {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   email: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   subject: string;
 
-  @Column()
+  @Column({ type: 'text' })
   message: string;
 
-  @Column()
+  @Column({ type: 'boolean', default: false })
   read: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 }

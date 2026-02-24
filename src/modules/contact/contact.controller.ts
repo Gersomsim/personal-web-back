@@ -14,7 +14,6 @@ import { Response } from 'src/core/utils';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { QueryContactDto } from './dto/query-contact.dto';
-import { UpdateContactDto } from './dto/update-contact.dto';
 
 @Controller('contact')
 export class ContactController {
@@ -43,12 +42,9 @@ export class ContactController {
 
   @Patch(':id')
   @Auth(Role.ADMIN)
-  async update(
-    @Param('id') id: string,
-    @Body() updateContactDto: UpdateContactDto,
-  ) {
-    const data = await this.contactService.update(+id, updateContactDto);
-    return Response.success(data, 'Message updated successfully');
+  async update(@Param('id') id: string) {
+    const data = await this.contactService.update(+id);
+    return Response.success(data, 'Message marked as read');
   }
 
   @Delete(':id')

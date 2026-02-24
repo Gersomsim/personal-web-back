@@ -28,8 +28,6 @@ const envsSchema = joi
   .object<EnvSchema>({
     DB_CONEXION: joi.string().required(),
 
-    API_KEY: joi.string().required(),
-
     JWT_SECRET: joi.string().required(),
     JWT_EXPIRES_IN: joi.string().required(),
 

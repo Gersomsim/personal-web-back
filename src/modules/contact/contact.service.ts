@@ -5,7 +5,6 @@ import { Pagination } from 'src/shared/interfaces';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { QueryContactDto } from './dto/query-contact.dto';
-import { UpdateContactDto } from './dto/update-contact.dto';
 import { Contact } from './entities/contact.entity';
 
 @Injectable()
@@ -49,9 +48,9 @@ export class ContactService {
     return contact;
   }
 
-  async update(id: number, updateContactDto: UpdateContactDto) {
+  async update(id: number) {
     const contact = await this.findOne(id);
-    this.contactRepository.merge(contact, updateContactDto);
+    contact.read = true;
     return this.contactRepository.save(contact);
   }
 

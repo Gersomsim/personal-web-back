@@ -5,12 +5,12 @@ import { ResponseInterceptor } from './core/interceptors/response/response.inter
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { ContactModule } from './modules/contact/contact.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { UsersModule } from './modules/users/users.module';
-import { ContactModule } from './modules/contact/contact.module';
 
 @Module({
   imports: [
