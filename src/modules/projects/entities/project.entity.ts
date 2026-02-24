@@ -26,10 +26,10 @@ export class Project {
   @Column({ type: 'varchar', length: 100 })
   title: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 150, nullable: true })
   subtitle: string;
 
-  @Column({ type: 'varchar', length: 250 })
+  @Column({ type: 'text' })
   description: string;
 
   @Column({ type: 'text', nullable: true })
