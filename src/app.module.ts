@@ -11,6 +11,7 @@ import { ProjectsModule } from './modules/projects/projects.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { UsersModule } from './modules/users/users.module';
+import { S3AwsModule } from './modules/s3-aws/s3-aws.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UsersModule } from './modules/users/users.module';
     AuthModule,
     SkillsModule,
     ContactModule,
+    S3AwsModule,
   ],
   controllers: [],
   providers: [

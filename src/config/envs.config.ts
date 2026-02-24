@@ -7,8 +7,6 @@ interface EnvSchema {
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
 
-  API_KEY: string;
-
   APP_URL: string;
   NODE_ENV: string;
   PORT: number;
@@ -22,6 +20,10 @@ interface EnvSchema {
   SWAGGER_DESCRIPTION: string;
   SWAGGER_VERSION: string;
   SWAGGER_TAG: string;
+
+  AWS_KEY: string;
+  AWS_SECRET: string;
+  AWS_BUCKET: string;
 }
 
 const envsSchema = joi
@@ -44,6 +46,10 @@ const envsSchema = joi
     SWAGGER_DESCRIPTION: joi.string().required(),
     SWAGGER_VERSION: joi.string().required(),
     SWAGGER_TAG: joi.string().required(),
+
+    AWS_KEY: joi.string().required(),
+    AWS_SECRET: joi.string().required(),
+    AWS_BUCKET: joi.string().required(),
   })
   .unknown(true);
 
@@ -82,6 +88,10 @@ export const envs = {
     limit: value.THROTTLE_LIMIT,
   },
   key: {
-    api: value.API_KEY,
+    aws: {
+      key: value.AWS_KEY,
+      secret: value.AWS_SECRET,
+      bucket: value.AWS_BUCKET,
+    },
   },
 };
