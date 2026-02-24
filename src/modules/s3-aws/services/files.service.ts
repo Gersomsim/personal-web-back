@@ -13,4 +13,8 @@ export class FilesService {
   getFilesByIds(ids: string[]): Promise<File[]> {
     return this.fileRepository.find({ where: { id: In(ids) } });
   }
+
+  getFileById(id: string): Promise<File | null> {
+    return this.fileRepository.findOne({ where: { id } });
+  }
 }

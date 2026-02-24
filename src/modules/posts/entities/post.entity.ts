@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Category } from 'src/modules/categories/entities/category.entity';
+import { File } from 'src/modules/s3-aws/entities/file.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
@@ -46,8 +47,12 @@ export class Post {
   @Column({ type: 'int', default: 0 })
   sometimesRead: number;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  image: string;
+  @ManyToOne(() => File, (file: File) => file.post, {
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn({ name: 'file_id' })
+  image: File;
 
   @ManyToOne(() => User, (user: User) => user.posts, { eager: true })
   @JoinColumn({ name: 'user_id' })

@@ -33,13 +33,13 @@ export class PostsService {
     let tags: Tag[] = [];
     if (payload.tagsId) {
       tags = await this.getTags(payload.tagsId);
-      console.log(tags);
     }
 
     const post = this.postRepository.create({
       ...payload,
       category: category!,
       tags: tags,
+      image: { id: payload.image },
     });
     return await this.postRepository.save(post);
   }
@@ -113,6 +113,7 @@ export class PostsService {
       ...updatePostDto,
       category: category!,
       tags: tags,
+      image: { id: updatePostDto.image },
     });
   }
 

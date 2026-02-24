@@ -1,9 +1,11 @@
+import { Post } from 'src/modules/posts/entities/post.entity';
 import { Project } from 'src/modules/projects/entities/project.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -36,4 +38,7 @@ export class File {
   //relarionships
   @ManyToMany(() => Project, (project: Project) => project.images)
   projects: Project[];
+
+  @ManyToOne(() => Post, (post: Post) => post.image)
+  post: Post;
 }
