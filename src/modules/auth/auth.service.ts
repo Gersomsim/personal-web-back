@@ -55,6 +55,9 @@ export class AuthService {
     if (!isPasswordMatch) {
       throw new UnauthorizedException('Invalid credentials');
     }
+    if (!user.isActive) {
+      throw new UnauthorizedException('User is not active');
+    }
     const { password, ...rest } = user;
     return {
       message: 'User logged in successfully',
