@@ -73,6 +73,7 @@ export class ProjectsService {
       where,
       skip: (page - 1) * limit,
       take: limit,
+      order: { createdAt: 'DESC' },
     });
     return {
       data: items,
