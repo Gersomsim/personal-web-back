@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { ProjectTechStack } from 'src/modules/projects/entities/project-tech-stack.entity';
+import { File } from 'src/modules/s3-aws/entities/file.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entity';
 import {
   Column,
@@ -37,8 +38,11 @@ export class Project {
   @Column({ type: 'text', nullable: true })
   solution: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  image: string;
+  @ManyToMany(() => File, (file: File) => file.projects, {
+    eager: true,
+  })
+  @JoinTable({ name: 'images_project' })
+  images: File[];
 
   @Column({ type: 'varchar', length: 250, nullable: true, unique: true })
   slug: string;
@@ -75,9 +79,6 @@ export class Project {
 
   @Column({ type: 'date' })
   developedAt: Date;
-
-  @Column({ type: 'json', nullable: true })
-  gallery: string[];
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   duration: string;

@@ -31,9 +31,10 @@ export class CreateProjectDto {
   @IsString()
   solution: string;
 
-  @IsString()
   @IsOptional()
-  image: string;
+  @IsArray()
+  @IsString({ each: true })
+  images: string[];
 
   @IsOptional()
   @IsArray()

@@ -9,6 +9,8 @@ import { isUUID } from 'src/helpers';
 import { Pagination } from 'src/shared/interfaces';
 import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
+import { File } from '../s3-aws/entities/file.entity';
+import { FilesService } from '../s3-aws/services/files.service';
 import { Tag } from '../tags/entities/tag.entity';
 import { TagsService } from '../tags/tags.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -23,6 +25,7 @@ export class ProjectsService {
     private projectRepository: Repository<Project>,
     private categoryService: CategoriesService,
     private tagService: TagsService,
+    private fileService: FilesService,
   ) {}
 
   async create(createProjectDto: CreateProjectDto) {
@@ -32,12 +35,16 @@ export class ProjectsService {
       throw new BadRequestException('Category not found');
     }
     const tags = await this.getTags(tagsId);
-    console.log(tags);
+    let images: File[] = [];
+    if (rest.images) {
+      images = await this.getFiles(rest.images);
+    }
 
     const project = this.projectRepository.create({
       ...rest,
       category: category,
       tags: tags,
+      images: images,
     });
     return this.projectRepository.save(project);
   }
@@ -97,9 +104,12 @@ export class ProjectsService {
     let tags: Tag[] = [];
     if (tagsId) {
       tags = await this.getTags(tagsId);
-      console.log('tags', tags);
     }
-    return this.projectRepository.save({ ...project, ...rest, tags });
+    let images: File[] = [];
+    if (rest.images) {
+      images = await this.getFiles(rest.images);
+    }
+    return this.projectRepository.save({ ...project, ...rest, tags, images });
   }
 
   remove(id: string) {
@@ -107,5 +117,8 @@ export class ProjectsService {
   }
   private async getTags(tagsId: string[]) {
     return this.tagService.findByIds(tagsId);
+  }
+  private async getFiles(filesId: string[]) {
+    return this.fileService.getFilesByIds(filesId);
   }
 }

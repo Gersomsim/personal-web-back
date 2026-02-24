@@ -1,7 +1,9 @@
+import { Project } from 'src/modules/projects/entities/project.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,4 +32,8 @@ export class File {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  //relarionships
+  @ManyToMany(() => Project, (project: Project) => project.images)
+  projects: Project[];
 }

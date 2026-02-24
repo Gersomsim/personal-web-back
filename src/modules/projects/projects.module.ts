@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from '../categories/categories.module';
+import { S3AwsModule } from '../s3-aws/s3-aws.module';
 import { TagsModule } from '../tags/tags.module';
 import { ProjectChallenge } from './entities/project-challenge.entity';
 import { ProjectResult } from './entities/project-result.entity';
@@ -20,6 +21,7 @@ import { ChallengeService, ResultService, TechStackService } from './services';
     ]),
     CategoriesModule,
     TagsModule,
+    S3AwsModule,
   ],
   controllers: [ProjectsController],
   providers: [
